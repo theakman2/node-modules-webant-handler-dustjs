@@ -1,0 +1,1 @@
+window.__global = require("../src/tmpl.dust")({name:"Bob",age:"thirty"});
