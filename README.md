@@ -1,6 +1,6 @@
 # node-modules-webant-handler-dustjs
 
-_Require dustjs templates with [webant](https://github.com/theakman2/node-modules-webant)_
+_Require [dustjs-linkedin](https://github.com/linkedin/dustjs) templates with [webant](https://github.com/theakman2/node-modules-webant)_
 
 ## Installation
 
@@ -14,9 +14,7 @@ Ensure the `dustjs` handler is present in your webant configuration file. For ex
 {
     "entry":"src/js/main.js",
     "dest":"build/main.js",
-    "handlers":{
-        "dustjs":{}
-    }
+    "handlers":["dustjs"]
 }
 ````
 
