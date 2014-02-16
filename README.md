@@ -25,6 +25,12 @@ var tmpl = require("./path/to/template.dust");
 var html = tmpl({name:"Jane Doe"});
 ````
 
+Need access to the `dust` object?
+
+```javascript
+var dust = require("@@dustjs/runtime");
+```
+
 ## Tests [![Build Status](https://travis-ci.org/theakman2/node-modules-webant-handler-dustjs.png?branch=master)](https://travis-ci.org/theakman2/node-modules-webant-handler-dustjs)
 
 Ensure [phantomjs](http://phantomjs.org) is installed and in your PATH, then run:

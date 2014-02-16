@@ -4,15 +4,17 @@ window.__global = require("1")({
     name: "Bob",
     age: "thirty"
 });
+
+window.__global += Object.keys(require("2").cache).length;
 },"1":function(require,module,exports) {
 var dust = require("2");
 
 (function() {
-    dust.register("_AUTO_TEMPLATE_NAME%0", body_0);
+    dust.register("tmpl.dust", body_0);
     function body_0(chk, ctx) {
-        return chk.write("Testing ").partial("_AUTO_TEMPLATE_NAME%1", ctx, {
+        return chk.write("Testing ").partial("partial.dust", ctx, {
             foo: "bar"
-        }).write(" (age: ").reference(ctx._get(false, [ "age" ]), ctx, "h").write(") ").partial("_AUTO_TEMPLATE_NAME%1", ctx, {
+        }).write(" (age: ").reference(ctx._get(false, [ "age" ]), ctx, "h").write(") ").partial("partial.dust", ctx, {
             foo: "baz"
         }).write(".");
     }
@@ -20,14 +22,14 @@ var dust = require("2");
 })();
 
 (function() {
-    dust.register("_AUTO_TEMPLATE_NAME%1", body_0);
+    dust.register("partial.dust", body_0);
     function body_0(chk, ctx) {
         return chk.write("name ").reference(ctx._get(false, [ "name" ]), ctx, "h").write(" in partial ").reference(ctx._get(false, [ "foo" ]), ctx, "h");
     }
     return body_0;
 })();
 
-module.exports = dust.getRenderFuncSync("_AUTO_TEMPLATE_NAME%0");
+module.exports = dust.getRenderFuncSync("tmpl.dust");
 },"2":function(require,module,exports) {
 var dust = require("3");
 

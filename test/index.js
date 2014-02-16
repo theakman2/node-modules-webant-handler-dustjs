@@ -42,17 +42,6 @@ function phantom(assert,done,cb) {
 }
 
 var tests = {
-	"test filetypes" : function(assert) {
-		var data = [ "http://mysite.co.uk/bla.js",
-				"//cdn.google.com/path/to/assets.css", "path/to/assets.dust",
-				"/abs/path/to/assets.handlebars", "path/to/assets.handlebars",
-				"/abs/path/to/assets.dust", "@@hbs/runtime",
-				"@@css/addStylesheet" ];
-		assert.deepEqual(data.map(function(fp) {
-			return handler.willHandle(fp);
-		}), [ false, false, true, false, false, true, false, false ],
-				"Should handle the correct files.");
-	},
 	"test with runtime" : function(assert, done) {
 		webant({
 			entry:path.join(__dirname,"headless","test.js"),
@@ -67,7 +56,7 @@ var tests = {
 			phantom(assert,done,function(out){
 				assert.strictEqual(
 					out,
-					"Testing name Bob in partial bar (age: thirty) name Bob in partial baz.",
+					"Testing name Bob in partial bar (age: thirty) name Bob in partial baz.2",
 					"dust should be compiled correctly"
 				);
 				done();
