@@ -1,37 +1,31 @@
-!function(r){function o(t,e){if("function"==typeof e){var n=o(t);return e.apply(void 0,"string"==typeof t[0]?[n]:n),void 0}if("string"==typeof t){var $=r[t];if($.hasOwnProperty("__module"))return $.__module.exports;var i,u={};return $.__module=i={exports:u},$.call(void 0,o,i,u),i.exports}for(var n=[],f=0;f<t.length;f++)n.push(o(t[f]));return n}o("0")}({
-"0":function(require,module,exports) {
-window.__global = require("1")({
-    name: "Bob",
-    age: "thirty"
-});
-
-window.__global += Object.keys(require("2").cache).length;
-},"1":function(require,module,exports) {
+(function(entryChunk){
+	function require(data,cb) {
+		if (typeof cb === "function") {
+			var ret = require(data);
+			cb.apply(undefined,typeof data[0] === "string" ? [ret] : ret);
+			return;
+		}
+		if (typeof data === "string") {
+			var fn = entryChunk[data];
+			if (fn.hasOwnProperty("__module")) {
+				return fn.__module.exports;
+			}
+			var module;
+			var exports = {};
+			fn.__module = module = { exports: exports };
+			fn.call(undefined,require,module,exports);
+			return module.exports;
+		}
+		var ret = [];
+		for (var i = 0; i < data.length; i++) {
+			ret.push(require(data[i]));
+		}
+		return ret;
+	};
+	require("1");
+})({
+"3":function(require,module,exports) {
 var dust = require("2");
-
-(function() {
-    dust.register("tmpl.dust", body_0);
-    function body_0(chk, ctx) {
-        return chk.write("Testing ").partial("partial.dust", ctx, {
-            foo: "bar"
-        }).write(" (age: ").reference(ctx._get(false, [ "age" ]), ctx, "h").write(") ").partial("partial.dust", ctx, {
-            foo: "baz"
-        }).write(".");
-    }
-    return body_0;
-})();
-
-(function() {
-    dust.register("partial.dust", body_0);
-    function body_0(chk, ctx) {
-        return chk.write("name ").reference(ctx._get(false, [ "name" ]), ctx, "h").write(" in partial ").reference(ctx._get(false, [ "foo" ]), ctx, "h");
-    }
-    return body_0;
-})();
-
-module.exports = dust.getRenderFuncSync("tmpl.dust");
-},"2":function(require,module,exports) {
-var dust = require("3");
 
 dust.getRenderFuncSync = function(tmplName) {
     return function(context) {
@@ -47,7 +41,8 @@ dust.getRenderFuncSync = function(tmplName) {
 };
 
 module.exports = dust;
-},"3":function(require,module,exports) {
+},
+"2":function(require,module,exports) {
 /*! Dust - Asynchronous Templating - v2.3.3
 * http://linkedin.github.io/dustjs/
 * Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
@@ -785,4 +780,37 @@ module.exports = dust;
         root.dust = dust;
     }
 })(this);
+},
+"1":function(require,module,exports) {
+window.__global = require("0")({
+    name: "Bob",
+    age: "thirty"
+});
+
+window.__global += Object.keys(require("3").cache).length;
+},
+"0":function(require,module,exports) {
+var dust = require("3");
+
+(function() {
+    dust.register("tmpl.dust", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("Testing ").partial("nested/partial.dust", ctx, {
+            foo: "bar"
+        }).write(" (age: ").reference(ctx._get(false, [ "age" ]), ctx, "h").write(") ").partial("nested/partial.dust", ctx, {
+            foo: "baz"
+        }).write(".");
+    }
+    return body_0;
+})();
+
+(function() {
+    dust.register("nested/partial.dust", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("name ").reference(ctx._get(false, [ "name" ]), ctx, "h").write(" in partial ").reference(ctx._get(false, [ "foo" ]), ctx, "h");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("tmpl.dust");
 }});

@@ -1,1 +1,1 @@
-Testing {>"./partial.dust" foo="bar"/} (age: {age}) {>"partial.dust" foo="baz"/}.
+Testing {>"./nested/partial.dust" foo="bar"/} (age: {age}) {>"./nested/partial.dust" foo="baz"/}.
