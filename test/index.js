@@ -56,7 +56,7 @@ var tests = {
 			phantom(assert,done,function(out){
 				assert.strictEqual(
 					out,
-					"Testing name Bob in partial bar (age: thirty) name Bob in partial baz.2",
+					"Bob m p u a x b y v barw q n p u a x b y v barw q o r a x b y s u a x b y v foow t thirty6u a x b y v Janew",
 					"dust should be compiled correctly"
 				);
 				done();

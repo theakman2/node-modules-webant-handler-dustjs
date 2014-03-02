@@ -22,27 +22,62 @@
 		}
 		return ret;
 	};
-	require("1");
+	require("0");
 })({
-"3":function(require,module,exports) {
+"8":function(require,module,exports) {
 var dust = require("2");
 
-dust.getRenderFuncSync = function(tmplName) {
-    return function(context) {
-        var dustOutput = "";
-        dust.render(tmplName, context, function(error, out) {
-            if (error) {
-                throw error;
-            }
-            dustOutput = out;
-        });
-        return dustOutput;
-    };
-};
+require("7");
 
-module.exports = dust;
+require("6");
+
+(function() {
+    dust.register("__WEBANT_DUST_1__", body_0);
+    function body_0(chk, ctx) {
+        return chk.reference(ctx._get(false, [ "name" ]), ctx, "h").write(" m ").partial("__WEBANT_DUST_2__", ctx, null).write(" n ").partial("__WEBANT_DUST_2__", ctx, null).write(" o ").partial("__WEBANT_DUST_6__", ctx, null).write(" ").reference(ctx._get(false, [ "age" ]), ctx, "h");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_1__");
 },
-"2":function(require,module,exports) {
+"7":function(require,module,exports) {
+var dust = require("2");
+
+require("1");
+
+require("4");
+
+(function() {
+    dust.register("__WEBANT_DUST_6__", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("r ").partial("__WEBANT_DUST_4__", ctx, null).write(" s ").partial("__WEBANT_DUST_3__", ctx, {
+            name2: "foo"
+        }).write(" t");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_6__");
+},
+"6":function(require,module,exports) {
+var dust = require("2");
+
+require("1");
+
+(function() {
+    dust.register("__WEBANT_DUST_2__", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("p ").partial("__WEBANT_DUST_3__", ctx, {
+            name2: "bar"
+        }).write(" q");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
+},
+"5":function(require,module,exports) {
 /*! Dust - Asynchronous Templating - v2.3.3
 * http://linkedin.github.io/dustjs/
 * Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
@@ -781,36 +816,89 @@ module.exports = dust;
     }
 })(this);
 },
+"4":function(require,module,exports) {
+var dust = require("2");
+
+require("3");
+
+(function() {
+    dust.register("__WEBANT_DUST_4__", body_0);
+    var blocks = {
+        bar: body_1,
+        foo: body_2
+    };
+    function body_0(chk, ctx) {
+        ctx = ctx.shiftBlocks(blocks);
+        return chk.partial("__WEBANT_DUST_5__", ctx, null);
+    }
+    function body_1(chk, ctx) {
+        ctx = ctx.shiftBlocks(blocks);
+        return chk.write("y");
+    }
+    function body_2(chk, ctx) {
+        ctx = ctx.shiftBlocks(blocks);
+        return chk.write("x");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_4__");
+},
+"3":function(require,module,exports) {
+var dust = require("2");
+
+(function() {
+    dust.register("__WEBANT_DUST_5__", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("a ").block(ctx.getBlock("foo"), ctx, {}, null).write(" b ").block(ctx.getBlock("bar"), ctx, {}, null);
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_5__");
+},
+"2":function(require,module,exports) {
+var dust = require("5");
+
+dust.getRenderFuncSync = function(tmplName) {
+    return function(context) {
+        var dustOutput = "";
+        dust.render(tmplName, context, function(error, out) {
+            if (error) {
+                throw error;
+            }
+            dustOutput = out;
+        });
+        return dustOutput;
+    };
+};
+
+module.exports = dust;
+},
 "1":function(require,module,exports) {
-window.__global = require("0")({
+var dust = require("2");
+
+require("4");
+
+(function() {
+    dust.register("__WEBANT_DUST_3__", body_0);
+    function body_0(chk, ctx) {
+        return chk.write("u ").partial("__WEBANT_DUST_4__", ctx, null).write(" v ").reference(ctx._get(false, [ "name2" ]), ctx, "h").write("w");
+    }
+    return body_0;
+})();
+
+module.exports = dust.getRenderFuncSync("__WEBANT_DUST_3__");
+},
+"0":function(require,module,exports) {
+window.__global = require("8")({
     name: "Bob",
     age: "thirty"
 });
 
-window.__global += Object.keys(require("3").cache).length;
-},
-"0":function(require,module,exports) {
-var dust = require("3");
+window.__global += Object.keys(require("2").cache).length;
 
-(function() {
-    dust.register("tmpl.dust", body_0);
-    function body_0(chk, ctx) {
-        return chk.write("Testing ").partial("nested/partial.dust", ctx, {
-            foo: "bar"
-        }).write(" (age: ").reference(ctx._get(false, [ "age" ]), ctx, "h").write(") ").partial("nested/partial.dust", ctx, {
-            foo: "baz"
-        }).write(".");
-    }
-    return body_0;
-})();
-
-(function() {
-    dust.register("nested/partial.dust", body_0);
-    function body_0(chk, ctx) {
-        return chk.write("name ").reference(ctx._get(false, [ "name" ]), ctx, "h").write(" in partial ").reference(ctx._get(false, [ "foo" ]), ctx, "h");
-    }
-    return body_0;
-})();
-
-module.exports = dust.getRenderFuncSync("tmpl.dust");
+window.__global += require("1")({
+    name2: "Jane"
+});
 }});
