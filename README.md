@@ -28,7 +28,7 @@ var html = tmpl({name:"Jane Doe"});
 Need access to the `dust` object?
 
 ```javascript
-var dust = require("@@dustjs/runtime");
+var dust = require("{dustjs/runtime}");
 ```
 
 ## Tests [![Build Status](https://travis-ci.org/theakman2/node-modules-webant-handler-dustjs.png?branch=master)](https://travis-ci.org/theakman2/node-modules-webant-handler-dustjs)
