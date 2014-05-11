@@ -1,40 +1,17 @@
-(function(entryChunk){
-	function require(data,cb) {
-		if (typeof cb === "function") {
-			var ret = require(data);
-			cb.apply(undefined,typeof data[0] === "string" ? [ret] : ret);
-			return;
-		}
-		if (typeof data === "string") {
-			var fn = entryChunk[data];
-			if (fn.hasOwnProperty("__module")) {
-				return fn.__module.exports;
-			}
-			var module;
-			var exports = {};
-			fn.__module = module = { exports: exports };
-			fn.call(undefined,require,module,exports);
-			return module.exports;
-		}
-		var ret = [];
-		for (var i = 0; i < data.length; i++) {
-			ret.push(require(data[i]));
-		}
-		return ret;
-	};
-	require("0");
-})({
+window["__MODULES__"] = window["__MODULES__"] || {};
+window["__MODULES__"].modules = window["__MODULES__"].modules || {};
+window["__MODULES__"].modules['main.js'] = {
 "8":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
-require("7");
+require([ "main.js", "7" ]);
 
-require("6");
+require([ "main.js", "6" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_1__", body_0);
     function body_0(chk, ctx) {
-        return chk.reference(ctx._get(false, [ "name" ]), ctx, "h").write(" m ").partial("__WEBANT_DUST_2__", ctx, null).write(" n ").partial("__WEBANT_DUST_2__", ctx, null).write(" o ").partial("__WEBANT_DUST_6__", ctx, null).write(" ").reference(ctx._get(false, [ "age" ]), ctx, "h");
+        return chk.reference(ctx.get([ "name" ], false), ctx, "h").write(" m ").partial("__WEBANT_DUST_2__", ctx, null).write(" n ").partial("__WEBANT_DUST_2__", ctx, null).write(" o ").partial("__WEBANT_DUST_6__", ctx, null).write(" ").reference(ctx.get([ "age" ], false), ctx, "h");
     }
     return body_0;
 })();
@@ -42,11 +19,11 @@ require("6");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_1__");
 },
 "7":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
-require("1");
+require([ "main.js", "1" ]);
 
-require("4");
+require([ "main.js", "4" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_6__", body_0);
@@ -61,9 +38,9 @@ require("4");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_6__");
 },
 "6":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
-require("1");
+require([ "main.js", "1" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_2__", body_0);
@@ -78,18 +55,34 @@ require("1");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
 },
 "5":function(require,module,exports) {
-/*! Dust - Asynchronous Templating - v2.3.3
+/*! Dust - Asynchronous Templating - v2.3.5
 * http://linkedin.github.io/dustjs/
 * Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
 (function(root) {
-    var dust = {}, NONE = "NONE", ERROR = "ERROR", WARN = "WARN", INFO = "INFO", DEBUG = "DEBUG", loggingLevels = [ DEBUG, INFO, WARN, ERROR, NONE ], EMPTY_FUNC = function() {}, logger = EMPTY_FUNC, loggerContext = this;
+    var dust = {}, NONE = "NONE", ERROR = "ERROR", WARN = "WARN", INFO = "INFO", DEBUG = "DEBUG", loggingLevels = [ DEBUG, INFO, WARN, ERROR, NONE ], EMPTY_FUNC = function() {}, logger = {}, originalLog, loggerContext;
     dust.debugLevel = NONE;
     dust.silenceErrors = false;
-    // Try to find the console logger in global scope
+    // Try to find the console in global scope
     if (root && root.console && root.console.log) {
-        logger = root.console.log;
         loggerContext = root.console;
+        originalLog = root.console.log;
     }
+    // robust logger for node.js, modern browsers, and IE <= 9.
+    logger.log = loggerContext ? function() {
+        // Do this for normal browsers
+        if (typeof originalLog === "function") {
+            logger.log = function() {
+                originalLog.apply(loggerContext, arguments);
+            };
+        } else {
+            // Do this for IE <= 9
+            logger.log = function() {
+                var message = Array.prototype.slice.apply(arguments).join(" ");
+                originalLog(message);
+            };
+        }
+        logger.log.apply(this, arguments);
+    } : function() {};
     /**
    * If dust.isDebug is true, Log dust debug statements, info statements, warning statements, and errors.
    * This default implementation will print to the console if it exists.
@@ -98,12 +91,8 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
    * @public
    */
     dust.log = function(message, type) {
-        if (dust.isDebug && dust.debugLevel === NONE) {
-            logger.call(loggerContext, '[!!!DEPRECATION WARNING!!!]: dust.isDebug is deprecated.  Set dust.debugLevel instead to the level of logging you want ["debug","info","warn","error","none"]');
-            dust.debugLevel = INFO;
-        }
         type = type || INFO;
-        if (loggingLevels.indexOf(type) >= loggingLevels.indexOf(dust.debugLevel)) {
+        if (dust.debugLevel !== NONE && dust.indexInArray(loggingLevels, type) >= dust.indexInArray(loggingLevels, dust.debugLevel)) {
             if (!dust.logQueue) {
                 dust.logQueue = [];
             }
@@ -111,7 +100,7 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
                 message: message,
                 type: type
             });
-            logger.call(loggerContext, "[DUST " + type + "]: " + message);
+            logger.log("[DUST " + type + "]: " + message);
         }
         if (!dust.silenceErrors && type === ERROR) {
             if (typeof message === "string") {
@@ -129,7 +118,7 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
    * @public
    */
     dust.onError = function(error, chunk) {
-        logger.call(loggerContext, "[!!!DEPRECATION WARNING!!!]: dust.onError will no longer return a chunk object.");
+        logger.log("[!!!DEPRECATION WARNING!!!]: dust.onError will no longer return a chunk object.");
         dust.log(error.message || error, ERROR);
         if (!dust.silenceErrors) {
             throw error;
@@ -215,6 +204,35 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
             return Object.prototype.toString.call(arr) === "[object Array]";
         };
     }
+    // indexOf shim for arrays for IE <= 8
+    // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+    dust.indexInArray = function(arr, item, fromIndex) {
+        fromIndex = +fromIndex || 0;
+        if (Array.prototype.indexOf) {
+            return arr.indexOf(item, fromIndex);
+        } else {
+            if (arr === undefined || arr === null) {
+                throw new TypeError('cannot call method "indexOf" of null');
+            }
+            var length = arr.length;
+            // Hack to convert object.length to a UInt32
+            if (Math.abs(fromIndex) === Infinity) {
+                fromIndex = 0;
+            }
+            if (fromIndex < 0) {
+                fromIndex += length;
+                if (fromIndex < 0) {
+                    fromIndex = 0;
+                }
+            }
+            for (;fromIndex < length; fromIndex++) {
+                if (arr[fromIndex] === item) {
+                    return fromIndex;
+                }
+            }
+            return -1;
+        }
+    };
     dust.nextTick = function() {
         return function(callback) {
             setTimeout(callback, 0);
@@ -236,7 +254,6 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
                 var name = filters[i];
                 if (name === "s") {
                     auto = null;
-                    dust.log("Using unescape filter on [" + string + "]", DEBUG);
                 } else {
                     if (typeof dust.filters[name] === "function") {
                         string = dust.filters[name](string);
@@ -327,7 +344,6 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
    */
     Context.prototype._get = function(cur, down) {
         var ctx = this.stack, i = 1, value, first, len, ctxThis;
-        dust.log("Searching for reference [{" + down.join(".") + "}] in template [" + this.getTemplateName() + "]", DEBUG);
         first = down[0];
         len = down.length;
         if (cur && len === 0) {
@@ -352,8 +368,15 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
                     ctx = this.global ? this.global[first] : undefined;
                 }
             } else {
-                // if scope is limited by a leading dot, don't search up the tree
-                ctx = ctx.head[first];
+                if (ctx) {
+                    // if scope is limited by a leading dot, don't search up the tree
+                    if (ctx.head) {
+                        ctx = ctx.head[first];
+                    } else {
+                        //context's head is empty, value we are searching for is not defined
+                        ctx = undefined;
+                    }
+                }
             }
             while (ctx && i < len) {
                 ctxThis = ctx;
@@ -814,12 +837,14 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
     } else {
         root.dust = dust;
     }
-})(this);
+})(function() {
+    return this;
+}());
 },
 "4":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
-require("3");
+require([ "main.js", "3" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_4__", body_0);
@@ -845,7 +870,7 @@ require("3");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_4__");
 },
 "3":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_5__", body_0);
@@ -858,7 +883,7 @@ var dust = require("2");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_5__");
 },
 "2":function(require,module,exports) {
-var dust = require("5");
+var dust = require([ "main.js", "5" ]);
 
 dust.getRenderFuncSync = function(tmplName) {
     return function(context) {
@@ -876,14 +901,14 @@ dust.getRenderFuncSync = function(tmplName) {
 module.exports = dust;
 },
 "1":function(require,module,exports) {
-var dust = require("2");
+var dust = require([ "main.js", "2" ]);
 
-require("4");
+require([ "main.js", "4" ]);
 
 (function() {
     dust.register("__WEBANT_DUST_3__", body_0);
     function body_0(chk, ctx) {
-        return chk.write("u ").partial("__WEBANT_DUST_4__", ctx, null).write(" v ").reference(ctx._get(false, [ "name2" ]), ctx, "h").write("w");
+        return chk.write("u ").partial("__WEBANT_DUST_4__", ctx, null).write(" v ").reference(ctx.get([ "name2" ], false), ctx, "h").write("w");
     }
     return body_0;
 })();
@@ -891,14 +916,16 @@ require("4");
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_3__");
 },
 "0":function(require,module,exports) {
-window.__global = require("8")({
+window.__global = require([ "main.js", "8" ])({
     name: "Bob",
     age: "thirty"
 });
 
-window.__global += Object.keys(require("2").cache).length;
+window.__global += Object.keys(require([ "main.js", "2" ]).cache).length;
 
-window.__global += require("1")({
+window.__global += require([ "main.js", "1" ])({
     name2: "Jane"
 });
-}});
+}};
+
+(function(){      function getExports(data,cb) {    var ret;    if (typeof data[0] === "string") {     try {      var fn = window["__MODULES__"].modules[data[0]][data[1]];     } catch(e) {      throw new Error("Module " + data + "not found.");      }     if (fn.hasOwnProperty("__module")) {      ret = fn.__module.exports;     } else {      var module;      var exports = {};      fn.__module = module = { exports: exports };      fn.call(       undefined,               getExports       ,       module,       exports      );      ret = module.exports;     }    } else {     ret = [];     for (var i = 0; i < data.length; i++) {      ret.push(getExports(data[i],cb));     }    }    if (typeof cb === "function") {     cb.apply(undefined,typeof data[0] === "string" ? [ret] : ret);    } else {     return ret;    }   };   window["__MODULES__"] = window["__MODULES__"] || {};   window["__MODULES__"].modules = window["__MODULES__"].modules || {};   window["__MODULES__"].getExports = getExports;       getExports(["main.js","0"]);     })();

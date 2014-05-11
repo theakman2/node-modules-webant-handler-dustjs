@@ -3,7 +3,7 @@ var path = require("path");
 var vm = require("vm");
 var childProcess = require("child_process");
 
-var webant = require("webant");
+var Webant = require("webant");
 var dust = require("dustjs-recursivenodecompiler");
 var shellEscape = require("shell-escape");
 
@@ -43,11 +43,12 @@ function phantom(assert,done,cb) {
 
 var tests = {
 	"test with runtime" : function(assert, done) {
-		webant({
+		var webant = new Webant({
 			entry:path.join(__dirname,"headless","test.js"),
 			dest:path.join(__dirname,"headless","main.js"),
 			handlers:[handler]
-		},function(err){
+		});
+		webant.build(function(err){
 			if (err) {
 				assert.fail("Webant should not error when parsing javascript (error: " + err + ")");
 				done();
