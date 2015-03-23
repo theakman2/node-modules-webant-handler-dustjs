@@ -8,14 +8,14 @@ require([ "main.js", "7" ]);
 
 require([ "main.js", "6" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_1__", body_0);
     function body_0(chk, ctx) {
         return chk.f(ctx.get([ "name" ], false), ctx, "h").w(" m ").p("__WEBANT_DUST_2__", ctx, {}).w(" n ").p("__WEBANT_DUST_2__", ctx, {}).w(" o ").p("__WEBANT_DUST_6__", ctx, {}).w(" ").f(ctx.get([ "age" ], false), ctx, "h");
     }
     body_0.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_1__");
 },
@@ -26,7 +26,7 @@ require([ "main.js", "1" ]);
 
 require([ "main.js", "4" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_6__", body_0);
     function body_0(chk, ctx) {
         return chk.w("r ").p("__WEBANT_DUST_4__", ctx, {}).w(" s ").p("__WEBANT_DUST_3__", ctx, {
@@ -35,7 +35,7 @@ require([ "main.js", "4" ]);
     }
     body_0.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_6__");
 },
@@ -44,7 +44,7 @@ var dust = require([ "main.js", "2" ]);
 
 require([ "main.js", "1" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_2__", body_0);
     function body_0(chk, ctx) {
         return chk.w("p ").p("__WEBANT_DUST_3__", ctx, {
@@ -53,19 +53,22 @@ require([ "main.js", "1" ]);
     }
     body_0.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
 },
 "5":function(require,module,exports) {
-/*! Dust - Asynchronous Templating - v2.5.1
+/*! Dust - Asynchronous Templating - v2.6.1
 * http://linkedin.github.io/dustjs/
-* Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
+* Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root) {
-    var dust = {}, NONE = "NONE", ERROR = "ERROR", WARN = "WARN", INFO = "INFO", DEBUG = "DEBUG", loggingLevels = [ DEBUG, INFO, WARN, ERROR, NONE ], EMPTY_FUNC = function() {}, logger = {}, originalLog, loggerContext;
+    var dust = {
+        version: "2.6.1"
+    }, NONE = "NONE", ERROR = "ERROR", WARN = "WARN", INFO = "INFO", DEBUG = "DEBUG", loggingLevels = [ DEBUG, INFO, WARN, ERROR, NONE ], EMPTY_FUNC = function() {}, logger = {}, originalLog, loggerContext;
     dust.debugLevel = NONE;
     dust.config = {
-        whitespace: false
+        whitespace: false,
+        amd: false
     };
     // Directive aliases to minify code
     dust._aliases = {
@@ -120,7 +123,7 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
                 message: message,
                 type: type
             });
-            logger.log("[DUST " + type + "]: " + message);
+            logger.log("[DUST:" + type + "]", message);
         }
     };
     dust.helpers = {};
@@ -276,12 +279,7 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
         u: encodeURI,
         uc: encodeURIComponent,
         js: function(value) {
-            if (!JSON) {
-                dust.log("JSON is undefined.  JSON stringify has not been used on [" + value + "]", WARN);
-                return value;
-            } else {
-                return JSON.stringify(value);
-            }
+            return dust.escapeJSON(value);
         },
         jp: function(value) {
             if (!JSON) {
@@ -829,7 +827,10 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
     };
     var HCHARS = /[&<>"']/, AMP = /&/g, LT = /</g, GT = />/g, QUOT = /\"/g, SQUOT = /\'/g;
     dust.escapeHtml = function(s) {
-        if (typeof s === "string") {
+        if (typeof s === "string" || s && typeof s.toString === "function") {
+            if (typeof s !== "string") {
+                s = s.toString();
+            }
             if (!HCHARS.test(s)) {
                 return s;
             }
@@ -844,10 +845,24 @@ module.exports = dust.getRenderFuncSync("__WEBANT_DUST_2__");
         }
         return s;
     };
-    if (typeof exports === "object") {
-        module.exports = dust;
+    dust.escapeJSON = function(o) {
+        if (!JSON) {
+            dust.log("JSON is undefined.  JSON stringify has not been used on [" + o + "]", WARN);
+            return o;
+        } else {
+            return JSON.stringify(o).replace(LS, "\\u2028").replace(PS, "\\u2029").replace(LT, "\\u003c");
+        }
+    };
+    if (typeof define === "function" && define.amd && define.amd.dust === true) {
+        define("dust.core", function() {
+            return dust;
+        });
     } else {
-        root.dust = dust;
+        if (typeof exports === "object") {
+            module.exports = dust;
+        } else {
+            root.dust = dust;
+        }
     }
 })(function() {
     return this;
@@ -858,7 +873,7 @@ var dust = require([ "main.js", "2" ]);
 
 require([ "main.js", "3" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_4__", body_0);
     var blocks = {
         bar: body_1,
@@ -880,21 +895,21 @@ require([ "main.js", "3" ]);
     }
     body_2.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_4__");
 },
 "3":function(require,module,exports) {
 var dust = require([ "main.js", "2" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_5__", body_0);
     function body_0(chk, ctx) {
         return chk.w("a ").block(ctx.getBlock("foo"), ctx, {}, {}).w(" b ").block(ctx.getBlock("bar"), ctx, {}, {});
     }
     body_0.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_5__");
 },
@@ -921,14 +936,14 @@ var dust = require([ "main.js", "2" ]);
 
 require([ "main.js", "4" ]);
 
-(function() {
+(function(dust) {
     dust.register("__WEBANT_DUST_3__", body_0);
     function body_0(chk, ctx) {
         return chk.w("u ").p("__WEBANT_DUST_4__", ctx, {}).w(" v ").f(ctx.get([ "name2" ], false), ctx, "h").w("w");
     }
     body_0.__dustBody = !0;
     return body_0;
-})();
+})(dust);
 
 module.exports = dust.getRenderFuncSync("__WEBANT_DUST_3__");
 },
