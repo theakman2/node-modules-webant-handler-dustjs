@@ -5,16 +5,16 @@
 	},
 	"description": "Require DustJS templates with webant",
 	"keywords": ["ant", "dust", "dustjs", "webant"],
-	"version": "4.2.0",
+	"version": "4.3.0",
 	"dependencies": {
 		"js-string-escape": "1.0.x",
-		"dustjs-recursivenodecompiler": "~3.2.0"
+		"dustjs-recursivenodecompiler": "~3.3.0"
 	},
 	"devDependencies": {
-		"extend": "2.0.x",
+		"extend": "~3.0.0",
 		"shell-escape": "~0.0.1",
 		"test": "0.6.x",
-		"webant":"~5.1.1"
+		"webant":"~5.2.0"
 	},
 	"repository": {
 		"type": "git",
